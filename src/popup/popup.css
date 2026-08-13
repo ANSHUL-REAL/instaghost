@@ -111,11 +111,33 @@ select:focus { border-color: rgba(var(--acc), .6); }
 .btn.danger { background: rgba(var(--bad), .13); color: rgb(var(--bad)); border-color: rgba(var(--bad), .22); }
 .btn.danger:hover { background: rgba(var(--bad), .2); }
 
+.hintbar {
+  padding: 0 16px 10px;
+  font-size: 10.5px;
+  color: rgb(var(--tx2));
+  text-align: center;
+  opacity: .8;
+}
+
 footer {
   display: flex; justify-content: space-between; align-items: center;
   padding: 10px 16px; font-size: 10.5px; color: rgb(var(--tx2));
   border-top: 1px solid rgba(255, 255, 255, .06); background: rgb(var(--bg2));
 }
+footer a {
+  color: rgb(var(--tx2));
+  font-weight: 600;
+  text-decoration: none;
+  transition: color .15s ease;
+}
+footer a:hover { color: rgb(var(--acc)); }
+footer .gh {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px; border-radius: 20px;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .07);
+}
+footer .gh:hover { background: rgba(var(--acc), .16); border-color: rgba(var(--acc), .35); }
 .dim { opacity: .75; }
 
 body.off .stats, body.off .section { opacity: .42; pointer-events: none; filter: saturate(.4); }
