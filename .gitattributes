@@ -1,0 +1,6 @@
+# Normalise line endings so Windows and Linux contributors don't fight.
+* text=auto eol=lf
+
+*.png binary
+*.zip binary
+*.crx binary

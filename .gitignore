@@ -1,0 +1,23 @@
+# InstaGhost ships zero dependencies — none of this should ever appear.
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build / packaging output
+*.zip
+*.crx
+*.pem
+dist/
+
+# Editor & OS noise
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local scratch
+*.log
+scratch/

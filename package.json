@@ -1,0 +1,37 @@
+{
+  "name": "instaghost",
+  "version": "1.0.0",
+  "description": "Ghost mode, media downloader, follower audit, themes and private dislikes for Instagram web. A zero-dependency Manifest V3 browser extension.",
+  "private": true,
+  "license": "MIT",
+  "author": "Anshul Nautiyal",
+  "homepage": "https://github.com/ANSHUL-REAL/instaghost#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ANSHUL-REAL/instaghost.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ANSHUL-REAL/instaghost/issues"
+  },
+  "keywords": [
+    "chrome-extension",
+    "browser-extension",
+    "manifest-v3",
+    "instagram",
+    "privacy",
+    "anonymous-story-viewer",
+    "downloader",
+    "dark-theme",
+    "userscript"
+  ],
+  "scripts": {
+    "validate": "node tools/validate.js",
+    "icons": "node tools/make-icons.js",
+    "zip": "node tools/pack.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

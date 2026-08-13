@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "InstaGhost — Ghost Mode & Toolkit",
+  "version": "1.0.0",
+  "description": "Anonymous stories, media downloader, follower audit, private dislikes, themes and ghost mode for Instagram web.",
+  "minimum_chrome_version": "111",
+  "permissions": ["storage", "downloads", "unlimitedStorage"],
+  "host_permissions": ["https://*.instagram.com/*"],
+  "background": {
+    "service_worker": "src/background/sw.js"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "InstaGhost",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.instagram.com/*"],
+      "js": ["src/inject/hook.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://www.instagram.com/*"],
+      "js": [
+        "src/shared/config.js",
+        "src/content/00-core.js",
+        "src/content/10-theme.js",
+        "src/content/20-media.js",
+        "src/content/30-dislike.js",
+        "src/content/40-cleanup.js",
+        "src/content/45-tools.js",
+        "src/content/50-hover.js",
+        "src/content/60-followers.js",
+        "src/content/70-panel.js",
+        "src/content/99-boot.js"
+      ],
+      "css": ["src/content/page.css"],
+      "run_at": "document_start",
+      "world": "ISOLATED",
+      "all_frames": false
+    }
+  ]
+}

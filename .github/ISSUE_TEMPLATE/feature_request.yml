@@ -1,0 +1,54 @@
+name: ✨ Feature request
+description: Suggest a new toggle or improvement
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before you write: InstaGhost will never add automation (mass follow /
+        unfollow, auto-like, bulk DMs), anything that sends data off your
+        machine, or anything aimed at other people's accounts rather than your
+        own experience. See [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+      description: Describe the annoyance, not the solution. It often has a simpler fix than you'd think.
+      placeholder: I keep accidentally opening Reels and losing 40 minutes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you have in mind
+    validations:
+      required: true
+
+  - type: dropdown
+    id: group
+    attributes:
+      label: Which tab would it live in
+      options:
+        - Ghost mode (blocks a network request)
+        - Hide counts
+        - Clean feed
+        - Hover peek
+        - Appearance
+        - Power tools
+        - Followers
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: default
+    attributes:
+      label: Should it be on by default?
+      description: The bar for default-on is high — it must be safe enough that it cannot break the page.
+      options:
+        - "No, opt-in"
+        - "Yes, on by default"
+    validations:
+      required: true

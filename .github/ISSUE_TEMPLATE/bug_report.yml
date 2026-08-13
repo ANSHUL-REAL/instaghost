@@ -1,0 +1,74 @@
+name: 🐛 Bug report
+description: Something in InstaGhost stopped working
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Instagram ships new code constantly, so
+        "it worked last week" is the most common bug here — and still useful.
+
+        **First, one 10-second check:** flip the master switch off in the popup.
+        If the problem is still there, it's Instagram, not InstaGhost.
+
+  - type: checkboxes
+    id: master
+    attributes:
+      label: Master-switch check
+      options:
+        - label: I turned InstaGhost off and the problem went away (so it is us)
+          required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What did you expect, and what did you get instead?
+      placeholder: The download button disappeared from reels, but still shows on the feed.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where
+      multiple: true
+      options:
+        - Home feed
+        - Reels
+        - Stories
+        - Direct messages
+        - Profile page
+        - Explore
+        - The InstaGhost dashboard itself
+        - The toolbar popup
+    validations:
+      required: true
+
+  - type: textarea
+    id: toggles
+    attributes:
+      label: Which toggles were on
+      description: A screenshot of the dashboard is perfect, or just list the relevant ones.
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output
+      description: "F12 → Console. Anything red, especially lines mentioning [InstaGhost]."
+      render: text
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 141 on Windows 11
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else

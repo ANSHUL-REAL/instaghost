@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>InstaGhost</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="glyph">👻</div>
+      <div>
+        <h1>InstaGhost</h1>
+        <p id="status">Checking tab…</p>
+      </div>
+    </div>
+    <div class="master">
+      <div class="sw" id="master"></div>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><b id="blocked">0</b><span>blocked</span></div>
+    <div class="stat"><b id="dislikes">0</b><span>dislikes</span></div>
+    <div class="stat"><b id="active">0</b><span>features on</span></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Quick switches</div>
+    <div id="quick"></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Theme</div>
+    <select id="theme"></select>
+  </div>
+
+  <div class="actions">
+    <div class="btn pri" id="open">Open full dashboard</div>
+    <div class="btn danger" id="reset">Reset everything</div>
+  </div>
+
+  <footer>
+    <span>v1.0.0</span>
+    <span class="dim">Ctrl + Shift + G on Instagram</span>
+  </footer>
+
+  <script src="../shared/config.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

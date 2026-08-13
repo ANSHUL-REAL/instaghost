@@ -1,0 +1,253 @@
+/* InstaGhost — styles for the bits that live inside Instagram's own DOM.
+ * The control panel is in a shadow root and styled separately. */
+
+:root {
+  --igx-accent: 124, 92, 255;
+}
+
+/* ------------------------------------------------------------------ *
+ * injected action buttons (download / dislike / copy)
+ * ------------------------------------------------------------------ */
+.igx-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin: 0 2px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: currentColor;
+  opacity: .85;
+  transition: opacity .16s ease, transform .16s ease, background-color .16s ease, color .16s ease;
+}
+.igx-btn:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+  background: rgba(var(--igx-accent), .14);
+  color: rgb(var(--igx-accent));
+}
+.igx-btn:active { transform: scale(.9); }
+.igx-btn svg { pointer-events: none; }
+
+.igx-dislike.igx-on {
+  color: rgb(255, 92, 118);
+  opacity: 1;
+  background: rgba(255, 92, 118, .14);
+}
+
+/* floating catch-all download button (stories, reels, profiles) */
+.igx-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 78px;
+  z-index: 2147482900;
+  width: 46px;
+  height: 46px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, rgba(var(--igx-accent), 1), rgba(var(--igx-accent), .7));
+  box-shadow: 0 8px 24px rgba(var(--igx-accent), .42), 0 2px 6px rgba(0, 0, 0, .35);
+  transition: transform .2s cubic-bezier(.2, .8, .3, 1), box-shadow .2s ease;
+}
+.igx-fab:hover { transform: translateY(-2px) scale(1.05); }
+.igx-fab:active { transform: scale(.94); }
+
+/* ------------------------------------------------------------------ *
+ * blur + hover to reveal (counts, suggested posts)
+ * ------------------------------------------------------------------ */
+.igx-blur {
+  filter: blur(5px);
+  transition: filter .18s ease;
+  cursor: help;
+}
+.igx-blur:hover { filter: none; }
+
+/* Blur the children, never the article itself — a filter on the parent would
+ * blur the "hover to peek" label along with the content. */
+.igx-peek { position: relative; }
+.igx-peek > *:not(.igx-peek-tag) {
+  filter: blur(16px) saturate(.7);
+  transition: filter .28s ease;
+}
+.igx-peek:hover > *:not(.igx-peek-tag) { filter: none; }
+
+.igx-peek-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 5;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(12, 12, 18, .72);
+  backdrop-filter: blur(8px);
+  filter: blur(0);
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+.igx-peek:hover .igx-peek-tag { opacity: 0; }
+
+.igx-collapse { display: none !important; }
+
+.igx-revealed-img { filter: none !important; cursor: default !important; }
+
+/* ------------------------------------------------------------------ *
+ * dislikes
+ * ------------------------------------------------------------------ */
+article.igx-disliked { position: relative; }
+article.igx-disliked[data-igx-action="dim"] { opacity: .28; transition: opacity .25s ease; }
+article.igx-disliked[data-igx-action="dim"]:hover { opacity: .75; }
+article.igx-disliked[data-igx-action="hide"] { display: none !important; }
+article.igx-disliked[data-igx-action="blur"] > *:not(.igx-cover) { filter: blur(18px) saturate(.6); }
+
+.igx-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: inherit;
+  background: rgba(10, 10, 16, .34);
+  backdrop-filter: blur(2px);
+}
+.igx-cover-text { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: .2px; }
+.igx-cover-btn {
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  background: rgba(255, 255, 255, .16);
+  border: 1px solid rgba(255, 255, 255, .22);
+  transition: background .16s ease;
+}
+.igx-cover-btn:hover { background: rgba(255, 255, 255, .3); }
+
+/* ------------------------------------------------------------------ *
+ * hover peek card
+ * ------------------------------------------------------------------ */
+#igx-peek-card {
+  position: fixed;
+  z-index: 2147483200;
+  pointer-events: none;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #101018;
+  border: 1px solid rgba(255, 255, 255, .1);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+  opacity: 0;
+  transform: scale(.96);
+  transition: opacity .17s ease, transform .17s cubic-bezier(.2, .8, .3, 1);
+}
+#igx-peek-card.igx-show { opacity: 1; transform: none; }
+#igx-peek-card .igx-peek-media {
+  display: block;
+  width: 100%;
+  max-height: 62vh;
+  overflow: hidden;
+  background: #0b0b12;
+}
+#igx-peek-card img,
+#igx-peek-card video {
+  display: block;
+  width: 100%;
+  max-height: 62vh;
+  object-fit: cover;
+}
+#igx-peek-card .igx-peek-empty {
+  padding: 44px 16px;
+  text-align: center;
+  font-size: 12px;
+  color: #8a8ea6;
+}
+#igx-peek-card .igx-peek-meta {
+  padding: 8px 12px 10px;
+  font-size: 11.5px;
+  color: #9a9eb6;
+  letter-spacing: .2px;
+  background: #101018;
+}
+
+/* ------------------------------------------------------------------ *
+ * story hold
+ * ------------------------------------------------------------------ */
+html.igx-story-hold section [style*="animation"],
+html.igx-story-hold section [style*="transition"] {
+  animation-play-state: paused !important;
+}
+
+/* ------------------------------------------------------------------ *
+ * session timer
+ * ------------------------------------------------------------------ */
+#igx-timer {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 2147482900;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #e9eaf2;
+  background: rgba(16, 16, 24, .82);
+  border: 1px solid rgba(255, 255, 255, .08);
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+}
+#igx-timer.igx-timer-warn {
+  color: #ffb74d;
+  border-color: rgba(255, 183, 77, .4);
+}
+
+/* ------------------------------------------------------------------ *
+ * toasts
+ * ------------------------------------------------------------------ */
+#igx-toasts {
+  position: fixed;
+  right: 20px;
+  bottom: 132px;
+  z-index: 2147483300;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.igx-toast {
+  max-width: 320px;
+  padding: 10px 15px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #eceef5;
+  background: rgba(18, 18, 26, .94);
+  border: 1px solid rgba(255, 255, 255, .09);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .45);
+  backdrop-filter: blur(12px);
+  animation: igx-toast-in .26s cubic-bezier(.2, .8, .3, 1);
+}
+.igx-toast-ok { border-left: 3px solid #40d699; }
+.igx-toast-warn { border-left: 3px solid #ffb74d; }
+.igx-toast-info { border-left: 3px solid rgb(var(--igx-accent)); }
+.igx-toast.igx-out { opacity: 0; transform: translateY(6px); transition: opacity .4s ease, transform .4s ease; }
+
+@keyframes igx-toast-in {
+  from { opacity: 0; transform: translateY(10px) scale(.97); }
+  to { opacity: 1; transform: none; }
+}
+
+/* native video controls we force on */
+video.igx-video::-webkit-media-controls-enclosure { border-radius: 0 0 14px 14px; }
