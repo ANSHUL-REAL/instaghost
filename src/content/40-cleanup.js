@@ -238,6 +238,9 @@
     var t = e.target;
     if (!t || (t.tagName !== 'IMG' && t.tagName !== 'VIDEO')) return;
     if (!t.closest('article')) return;
+    /* Swallow the first click to reveal — but only the first. Otherwise the
+     * post can never be opened while this setting is on. */
+    if (t.classList.contains('igx-revealed-img')) return;
     e.preventDefault();
     e.stopPropagation();
     t.classList.add('igx-revealed-img');
