@@ -149,6 +149,67 @@
     schedule();
   }, 350);
 
+  /* ---------------- keyboard, across the shadow boundary ----------------
+   *
+   * Events fired inside our shadow root are retargeted on the way out: a
+   * listener on document sees the host <div id="igx-root">, not the field, and
+   * document.activeElement reports the host too.
+   *
+   * That breaks every "is the user typing right now?" guard on the page —
+   * ours and Instagram's. Theirs is the damaging one: their keyboard shortcuts
+   * conclude no field is focused and swallow the character.
+   * ------------------------------------------------------------------ */
+  function realTarget(e) {
+    return (e.composedPath && e.composedPath()[0]) || e.target;
+  }
+
+  IGX.editableTarget = function (e) {
+    var el = realTarget(e);
+    if (!el || !el.tagName) return null;
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable) return el;
+    return null;
+  };
+
+  IGX.inOwnUi = function (e) {
+    var path = (e.composedPath && e.composedPath()) || [];
+    for (var i = 0; i < path.length; i++) {
+      if (path[i] && path[i].id === 'igx-root') return true;
+    }
+    return false;
+  };
+
+  /* A capture-phase listener on document cannot be blocked without also
+   * stopping the field from ever receiving the event. So rather than fight for
+   * the keystroke, we notice it never landed and put it back. Costs nothing
+   * when nothing is interfering. */
+  document.addEventListener('keydown', function (e) {
+    if (!IGX.inOwnUi(e)) return;
+    var el = IGX.editableTarget(e);
+    if (!el || el.isContentEditable) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key !== 'Backspace' && e.key.length !== 1) return;   // skips IME, arrows, F-keys
+
+    var before = el.value;
+    var start = el.selectionStart;
+    var end = el.selectionEnd;
+
+    setTimeout(function () {
+      if (el.value !== before) return;            // it landed on its own
+      var s = (start == null) ? el.value.length : start;
+      var t = (end == null) ? s : end;
+
+      if (e.key === 'Backspace') {
+        if (s === t) { if (!s) return; s -= 1; }
+        el.value = el.value.slice(0, s) + el.value.slice(t);
+      } else {
+        el.value = el.value.slice(0, s) + e.key + el.value.slice(t);
+        s += 1;
+      }
+      try { el.setSelectionRange(s, s); } catch (err) {}
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }, 0);
+  }, true);
+
   /* ---------------- toasts ---------------- */
   var toastHost = null;
   IGX.toast = function (msg, kind) {

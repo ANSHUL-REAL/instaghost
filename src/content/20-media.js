@@ -242,8 +242,11 @@
   document.addEventListener('keydown', function (e) {
     if (!IGX.settings.enabled || !IGX.settings.dlHotkey) return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    var t = e.target;
-    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    /* e.target is retargeted to the shadow host for anything typed in our own
+     * panel, so this has to look at the composed path or a plain "d" in the
+     * watchlist field triggers a download. */
+    if (IGX.editableTarget(e)) return;
+    if (IGX.inOwnUi(e)) return;
     if (e.key === 'd' || e.key === 'D') {
       e.preventDefault();
       media.grabVisible();

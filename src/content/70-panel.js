@@ -407,6 +407,13 @@
       renderMain();
     });
 
+    /* Keep our keystrokes inside the panel. Stopping them here, at the shadow
+     * root, means nothing on the page sees them on the way out — Instagram
+     * cannot tell a field is focused, because retargeting hides it. */
+    ['keydown', 'keypress', 'keyup'].forEach(function (type) {
+      root.addEventListener(type, function (e) { e.stopPropagation(); });
+    });
+
     document.body.appendChild(host);
     renderNav();
     renderMain();

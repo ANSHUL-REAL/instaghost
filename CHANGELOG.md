@@ -5,6 +5,19 @@ All notable changes to InstaGhost are documented here.
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 and the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [1.1.1] — 2026-08-14
+
+### Fixed
+- **Typing in the panel swallowed characters.** Events from inside the shadow
+  root are retargeted on the way out, so a document-level listener sees the host
+  `<div>` and `document.activeElement` reports the host too. Every "is the user
+  typing?" guard on the page therefore failed — including Instagram's, whose
+  keyboard shortcuts concluded no field was focused and ate the keystroke.
+  Key events are now stopped at the shadow root, and any character that still
+  gets swallowed is reinserted.
+- The `D` download hotkey fired while typing a `d` into InstaGhost's own fields,
+  for the same reason. Guards now read the composed path instead of `e.target`.
+
 ## [1.1.0] — 2026-08-14
 
 ### Added
@@ -81,3 +94,4 @@ First release.
 
 [1.0.0]: https://github.com/ANSHUL-REAL/instaghost/releases/tag/v1.0.0
 [1.1.0]: https://github.com/ANSHUL-REAL/instaghost/releases/tag/v1.1.0
+[1.1.1]: https://github.com/ANSHUL-REAL/instaghost/releases/tag/v1.1.1
