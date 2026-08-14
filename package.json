@@ -1,6 +1,6 @@
 {
   "name": "instaghost",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Ghost mode, media downloader, follower audit, themes and private dislikes for Instagram web. A zero-dependency Manifest V3 browser extension.",
   "private": true,
   "license": "MIT",

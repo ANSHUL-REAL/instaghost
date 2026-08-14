@@ -5,6 +5,26 @@ All notable changes to InstaGhost are documented here.
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 and the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [1.1.0] — 2026-08-14
+
+### Added
+- **Beyond Insta+ tab** — exact timestamps, full-size profile-picture lightbox,
+  bulk download of everything loaded on a page, DM media download,
+  picture-in-picture, alt-click to copy any text, caption sidecar files, translate
+- **Unsend vault** (off by default) — archives DM items and flags ones that stop
+  coming back, with a pagination guard so a narrower fetch window is not mistaken
+  for a mass deletion
+- **Watchlist** — pin accounts, look up their public profile, recent posts and
+  tagged posts on demand. No polling, no history
+- Author attribution and repository links in the dashboard, popup and manifest
+
+### Fixed
+- **Security:** the follower list built rows from API data with `innerHTML`, so an
+  `<img onerror>` in someone's display name would have executed in the isolated
+  world where `chrome.*` is reachable. All user-controlled values are escaped now
+- `blurFeedImages` swallowed every click on a feed image, making revealed posts
+  impossible to open
+
 ## [1.0.0] — 2026-08-13
 
 First release.
@@ -60,3 +80,4 @@ First release.
 - Reset everything clears settings, dislikes and snapshots
 
 [1.0.0]: https://github.com/ANSHUL-REAL/instaghost/releases/tag/v1.0.0
+[1.1.0]: https://github.com/ANSHUL-REAL/instaghost/releases/tag/v1.1.0

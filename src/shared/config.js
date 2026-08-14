@@ -347,7 +347,27 @@
       hint: 'Also keeps the CDN link for unsent photos and videos. Those links expire on Instagram\'s side after a while.'
     },
 
-    /* ============ 9. Follower audit ============ */
+    /* ============ 9. Watchlist ============
+     * Deliberately a bookmark list with a good profile view, not a tracker.
+     * It looks things up when you ask and keeps no history — see the note in
+     * the panel for why that line is drawn there. */
+    {
+      key: 'watchEnabled', group: 'watch', def: true,
+      label: 'Watchlist',
+      hint: 'Pin accounts you check often and see their public profile without leaving the page you are on.'
+    },
+    {
+      key: 'watchTagged', group: 'watch', def: true,
+      label: 'Include posts they are tagged in',
+      hint: 'Fetches the public "tagged" feed alongside their own posts. One extra request per lookup.'
+    },
+    {
+      key: 'watchPinButton', group: 'watch', def: true,
+      label: 'Pin button on profiles',
+      hint: 'Adds a ☆ next to the username on any profile page.'
+    },
+
+    /* ============ 10. Follower audit ============ */
     {
       key: 'scanDelay', group: 'audit', def: '1800', type: 'select',
       options: [
@@ -385,6 +405,7 @@
     { id: 'tools',  label: 'Power tools',  icon: '⚡', blurb: 'Downloads, private dislikes, playback control.' },
     { id: 'plus',   label: 'Beyond Insta+', icon: '🚀', blurb: 'Everything the modded Android clients are installed for — and the things they cannot do, because they are not a browser.' },
     { id: 'vault',  label: 'Unsend vault', icon: '🗄️', blurb: 'Messages someone took back. Off by default, and worth a moment\'s thought before you turn it on.' },
+    { id: 'watch',  label: 'Watchlist',    icon: '⭐', blurb: 'Accounts you check often, with their public profile one click away.' },
     { id: 'audit',  label: 'Followers',    icon: '📊', blurb: 'Who dropped you, who never followed back.' }
   ];
 

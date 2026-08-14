@@ -82,6 +82,47 @@ box that overrides everything.
 - Real video controls, playback speed, remembered mute & volume, pause stories on
   hover, copy link (shift = copy caption), session timer.
 
+### 🚀 Beyond Insta+
+The things modded Android clients get installed for — and three they cannot do,
+because they are not a browser.
+
+- **Exact timestamps** — Instagram already ships the real time in `<time datetime>`,
+  it just refuses to show it. "4d" becomes the actual date, with the full weekday on hover.
+- **Full-size profile pictures** — click any avatar for a lightbox with save and
+  open-original. Instagram provides no way to do this at all.
+- **Bulk download** — one click saves every post loaded on the page. A whole
+  profile grid, hashtag or saved collection, not one post at a time.
+- **DM media download** — save photos and videos out of a conversation.
+- **Picture-in-picture** — pop a reel into a floating window that survives
+  switching tabs.
+- **Alt-click to copy any text** — captions, comments, bios, usernames.
+- **Caption sidecar files** and a **translate button**.
+
+### 🗄️ Unsend vault *(off by default)*
+Archives DM items as they arrive, so a message someone unsends is still readable.
+
+The subtle part: a thread fetch returns a *window* of messages, not the whole
+history, so an item only counts as unsent if it falls inside the time range the
+new payload actually covers. Without that guard, scrolling a conversation would
+flag half of it as deleted.
+
+It only ever keeps messages already delivered to you, and nothing leaves your
+machine. But someone unsending *is* them changing their mind, and this overrides
+that — which is why it ships off, with that trade stated in the panel rather than
+buried down here.
+
+### ⭐ Watchlist
+Pin accounts you check often and see their public profile without leaving the
+page you are on: bio, links, counts, recent posts, and the posts they are tagged in.
+
+**A bookmark list, not a tracker.** Nothing runs on a timer, no history is kept,
+and each lookup asks Instagram once and forgets the answer when you close the tab.
+The stored part is just a list of usernames.
+
+Note on a common request: finding **every comment a person has written** is not
+possible — for anyone. Instagram has no endpoint for it; comments only exist per
+post. No extension can do it, and any tool claiming otherwise is guessing.
+
 ### 📊 Followers
 One scan walks your follower and following lists and works out:
 

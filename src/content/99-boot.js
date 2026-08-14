@@ -5,6 +5,7 @@
 
   function start() {
     IGX.vault.load();
+    IGX.watch.load();
     IGX.dislike.load(function () {
       IGX.loadSettings(function () {
         IGX.ready = true;

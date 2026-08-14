@@ -262,6 +262,46 @@
     animation:slide 1.3s ease-in-out infinite;}
   @keyframes slide{0%{transform:translateX(-100%);}100%{transform:translateX(400%);}}
 
+  /* ---------- watchlist ---------- */
+  .addbar{display:flex;gap:8px;margin:14px 0;}
+  .addbar input{
+    flex:1;background:rgb(var(--card));border:1px solid rgba(255,255,255,.08);
+    border-radius:10px;padding:9px 12px;font-size:12.5px;color:rgb(var(--tx));cursor:text;
+  }
+  .addbar input:focus{border-color:rgba(var(--acc),.6);}
+
+  .wcard{
+    margin-bottom:10px;border-radius:14px;overflow:hidden;
+    background:rgb(var(--card));border:1px solid rgba(255,255,255,.05);
+    transition:border-color .18s ease;
+  }
+  .wcard:hover{border-color:rgba(var(--acc),.3);}
+  .whead{display:flex;align-items:center;gap:11px;padding:12px 14px;cursor:pointer;}
+  .whead img{width:42px;height:42px;border-radius:50%;flex:none;background:rgb(var(--bg2));object-fit:cover;}
+  .whead .wn{font-size:13.5px;font-weight:700;}
+  .whead .wf{font-size:11.5px;color:rgb(var(--tx2));margin-top:2px;}
+  .whead .wact{margin-left:auto;display:flex;gap:6px;align-items:center;}
+
+  .wbody{padding:0 14px 14px;border-top:1px solid rgba(255,255,255,.05);}
+  .wbio{font-size:12.3px;line-height:1.55;margin:12px 0;white-space:pre-wrap;word-break:break-word;}
+  .wstats{display:flex;gap:16px;margin:10px 0 4px;}
+  .wstats div{font-size:11px;color:rgb(var(--tx2));}
+  .wstats b{display:block;font-size:15px;color:rgb(var(--tx));font-variant-numeric:tabular-nums;}
+  .wlabel{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+    color:rgb(var(--tx2));margin:14px 0 8px;}
+  .wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px;}
+  .wgrid a{
+    position:relative;display:block;aspect-ratio:1;border-radius:9px;overflow:hidden;
+    background:rgb(var(--bg2));transition:transform .18s ease;
+  }
+  .wgrid a:hover{transform:scale(1.04);}
+  .wgrid img{width:100%;height:100%;object-fit:cover;display:block;}
+  .wgrid .vid{position:absolute;top:5px;right:6px;font-size:10px;opacity:.9;}
+  .wtag{
+    display:inline-block;padding:2px 7px;border-radius:5px;font-size:9.5px;font-weight:700;
+    letter-spacing:.4px;text-transform:uppercase;background:rgba(255,255,255,.08);color:rgb(var(--tx2));
+  }
+
   .note{
     padding:11px 13px;border-radius:11px;font-size:11.8px;line-height:1.6;margin-bottom:14px;
     background:rgba(var(--warn),.09);border:1px solid rgba(var(--warn),.22);color:rgb(var(--tx));
@@ -521,6 +561,179 @@
     if (currentTab === 'ghost') renderActivityNote();
     if (currentTab === 'plus') renderPlusActions();
     if (currentTab === 'vault') renderVault();
+    if (currentTab === 'watch') renderWatch();
+  }
+
+  /* ================================================================== *
+   * watchlist
+   * ================================================================== */
+  var openCard = null;
+
+  function renderWatch() {
+    note('info', '<b>A bookmark list, not a tracker.</b> Nothing here runs on a timer and no history is kept — ' +
+      'each lookup asks Instagram once, shows you the public profile, and forgets it when you close the tab. ' +
+      'Finding every comment someone has written is not possible for anyone: Instagram has no endpoint for it, ' +
+      'comments only exist per post.');
+
+    var bar = document.createElement('div');
+    bar.className = 'addbar';
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Add a username — e.g. nasa';
+    var add = el('div', 'btn pri', 'Pin');
+
+    function doAdd() {
+      var r = IGX.watch.add(input.value);
+      if (!r.ok) { IGX.toast(r.error, 'warn'); return; }
+      input.value = '';
+      IGX.toast('⭐ @' + r.username + ' pinned', 'ok');
+      renderMain();
+    }
+    add.addEventListener('click', doAdd);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') doAdd(); });
+
+    bar.appendChild(input);
+    bar.appendChild(add);
+    ui.main.appendChild(bar);
+
+    var list = IGX.watch.list();
+    if (!list.length) {
+      ui.main.appendChild(el('div', 'empty',
+        'Nothing pinned. Add a username above, or hit the ☆ next to anyone\'s name on their profile page.'));
+      return;
+    }
+
+    list.forEach(function (p) { ui.main.appendChild(watchCard(p)); });
+  }
+
+  function watchCard(p) {
+    var cached = IGX.watch.cached(p.username);
+    var card = document.createElement('div');
+    card.className = 'wcard';
+
+    var head = document.createElement('div');
+    head.className = 'whead';
+    head.innerHTML =
+      '<img src="' + escapeHtml((cached && cached.pic) || '') + '" loading="lazy" referrerpolicy="no-referrer" />' +
+      '<div><div class="wn">@' + escapeHtml(p.username) + (cached && cached.ver ? ' ✓' : '') + '</div>' +
+      '<div class="wf">' + escapeHtml(cached ? (cached.fullName || (cached.priv ? 'private account' : ' ')) : 'not looked up yet') + '</div></div>';
+
+    var act = document.createElement('div');
+    act.className = 'wact';
+
+    var look = el('div', 'btn', cached ? 'Refresh' : 'Look up');
+    look.addEventListener('click', function (e) {
+      e.stopPropagation();
+      look.textContent = 'Loading…';
+      look.setAttribute('disabled', '');
+      IGX.watch.lookup(p.username).then(function (res) {
+        if (res && res.error) { IGX.toast(res.error, 'warn'); }
+        openCard = p.username;
+        renderMain();
+      });
+    });
+    act.appendChild(look);
+
+    var open = el('a', 'btn', 'Profile');
+    open.href = 'https://www.instagram.com/' + encodeURIComponent(p.username) + '/';
+    open.target = '_blank';
+    open.rel = 'noopener noreferrer';
+    open.style.textDecoration = 'none';
+    act.appendChild(open);
+
+    var rm = el('div', 'btn danger', 'Unpin');
+    rm.addEventListener('click', function (e) {
+      e.stopPropagation();
+      IGX.watch.remove(p.username);
+      renderMain();
+    });
+    act.appendChild(rm);
+
+    head.appendChild(act);
+    head.addEventListener('click', function () {
+      openCard = (openCard === p.username) ? null : p.username;
+      renderMain();
+    });
+    card.appendChild(head);
+
+    if (openCard === p.username && cached) card.appendChild(watchBody(cached));
+    return card;
+  }
+
+  function watchBody(c) {
+    var body = document.createElement('div');
+    body.className = 'wbody';
+
+    var stats = document.createElement('div');
+    stats.className = 'wstats';
+    stats.innerHTML =
+      '<div><b>' + IGX.fmt(c.posts) + '</b>posts</div>' +
+      '<div><b>' + IGX.fmt(c.followers) + '</b>followers</div>' +
+      '<div><b>' + IGX.fmt(c.following) + '</b>following</div>' +
+      (c.priv ? '<div><b>🔒</b>private</div>' : '');
+    body.appendChild(stats);
+
+    if (c.category) {
+      var cat = el('div', '', '');
+      cat.innerHTML = '<span class="wtag">' + escapeHtml(c.category) + '</span>';
+      cat.style.marginTop = '10px';
+      body.appendChild(cat);
+    }
+
+    if (c.bio) {
+      var bio = el('div', 'wbio', c.bio);      // textContent — never innerHTML
+      body.appendChild(bio);
+    }
+
+    if (c.link) {
+      var link = el('a', '', c.link);
+      link.href = /^https?:\/\//i.test(c.link) ? c.link : 'https://' + c.link;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.style.cssText = 'font-size:12px;color:rgb(var(--acc));text-decoration:none;';
+      body.appendChild(link);
+    }
+
+    if (c.priv) {
+      body.appendChild(el('div', 'empty', 'This account is private, so there is nothing public to show.'));
+      return body;
+    }
+
+    body.appendChild(grid('Recent posts', c.recent));
+    if (IGX.settings.watchTagged) {
+      if (c.taggedError) {
+        var w = el('div', 'empty', c.taggedError);
+        body.appendChild(el('div', 'wlabel', 'Tagged in'));
+        body.appendChild(w);
+      } else {
+        body.appendChild(grid('Tagged in', c.tagged));
+      }
+    }
+
+    body.appendChild(el('div', 'empty', 'Looked up ' + IGX.stamp(c.fetched) + ' · not stored, not refreshed on its own'));
+    return body;
+  }
+
+  function grid(title, items) {
+    var wrap = document.createElement('div');
+    wrap.appendChild(el('div', 'wlabel', title));
+    if (!items || !items.length) {
+      wrap.appendChild(el('div', 'empty', 'Nothing public here.'));
+      return wrap;
+    }
+    var g = document.createElement('div');
+    g.className = 'wgrid';
+    items.forEach(function (it) {
+      var a = document.createElement('a');
+      a.href = 'https://www.instagram.com/p/' + encodeURIComponent(it.code) + '/';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.innerHTML = '<img src="' + escapeHtml(it.thumb || '') + '" loading="lazy" referrerpolicy="no-referrer" />' +
+        (it.video ? '<span class="vid">▶</span>' : '');
+      g.appendChild(a);
+    });
+    wrap.appendChild(g);
+    return wrap;
   }
 
   /* ---- page actions for the Beyond Insta+ tab ---- */

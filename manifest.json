@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "InstaGhost — Ghost Mode & Toolkit",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Anonymous stories, media downloader, follower audit, private dislikes, themes and ghost mode for Instagram web. Made by Anshul.",
   "homepage_url": "https://github.com/ANSHUL-REAL/instaghost",
   "minimum_chrome_version": "111",
@@ -47,6 +47,7 @@
         "src/content/47-plus.js",
         "src/content/48-vault.js",
         "src/content/50-hover.js",
+        "src/content/55-watch.js",
         "src/content/60-followers.js",
         "src/content/70-panel.js",
         "src/content/99-boot.js"
