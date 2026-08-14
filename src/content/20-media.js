@@ -94,9 +94,9 @@
     return String(s || 'instagram').replace(/[^\w.\-]+/g, '_').slice(0, 60);
   }
 
-  media.download = function (rec, label) {
+  media.download = function (rec, label, quiet) {
     if (!rec || !rec.items || !rec.items.length) {
-      IGX.toast('Nothing to download here yet — scroll the media into view and retry.', 'warn');
+      if (!quiet) IGX.toast('Nothing to download here yet — scroll the media into view and retry.', 'warn');
       return;
     }
     var s = IGX.settings;
@@ -110,6 +110,9 @@
       chrome.runtime.sendMessage({ type: 'igx:download', url: item.url, filename: path });
     });
 
+    if (IGX.plus && IGX.plus.saveCaptionFile) IGX.plus.saveCaptionFile(rec);
+
+    if (quiet) return;
     IGX.toast(
       (multi ? rec.items.length + ' files' : (rec.items[0].type === 'video' ? 'Video' : 'Photo')) +
       ' from @' + (rec.owner || 'instagram') + (label ? ' · ' + label : ''),
@@ -140,6 +143,7 @@
    * floating button, which is how stories and profile pictures get saved. */
   media.grabVisible = function () {
     var route = IGX.route();
+    if (route === 'dm' && IGX.settings.dmDownload && IGX.plus) return IGX.plus.dmGrab();
     if (route === 'story' || route === 'profile') return media.grab(document.body, route);
 
     var best = null, bestArea = 0;
@@ -225,9 +229,13 @@
     var fab = document.getElementById('igx-fab-dl');
     if (!fab) return;
     var route = IGX.route();
-    var show = IGX.settings.enabled && IGX.settings.dlButtons &&
-               (route === 'story' || route === 'reel' || route === 'profile');
+    var show = IGX.settings.enabled &&
+      ((IGX.settings.dlButtons && (route === 'story' || route === 'reel' || route === 'profile')) ||
+       (IGX.settings.dmDownload && route === 'dm'));
     fab.style.display = show ? 'flex' : 'none';
+    fab.title = route === 'dm'
+      ? 'Save every photo and video loaded in this conversation'
+      : 'Download what you are looking at';
   }
 
   /* ---------------- hotkey ---------------- */

@@ -59,13 +59,13 @@
       return;
     }
     if (m.type === 'MEDIA_CACHED') { IGX.emit('media', m.payload); return; }
+    if (m.type === 'DM_THREAD') { IGX.emit('dm', m.payload); return; }
   });
 
   IGX.pushSettings = function () {
     var page = {};
-    for (var i = 0; i < CFG.PAGE_KEYS.length; i++) {
-      page[CFG.PAGE_KEYS[i]] = IGX.settings[CFG.PAGE_KEYS[i]];
-    }
+    var keys = CFG.PAGE_KEYS.concat(CFG.EXTRA_PAGE_KEYS);
+    for (var i = 0; i < keys.length; i++) page[keys[i]] = IGX.settings[keys[i]];
     IGX.toPage('SETTINGS', page);
   };
 

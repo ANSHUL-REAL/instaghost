@@ -508,11 +508,123 @@
     }
     if (currentTab === 'audit') { renderAudit(); return; }
 
+    if (currentTab === 'vault') {
+      note('warn', '<b>Worth a thought first.</b> This only ever keeps messages that were already delivered to you — ' +
+        'nothing is fetched, and nothing leaves this machine. But someone unsending a message is them changing their ' +
+        'mind, and this quietly overrides that. It is off by default on purpose.');
+    }
+
     CFG.SCHEMA.filter(function (d) { return d.group === currentTab; })
       .forEach(function (d) { ui.main.appendChild(rowFor(d)); });
 
     if (currentTab === 'tools') renderDislikeManager();
     if (currentTab === 'ghost') renderActivityNote();
+    if (currentTab === 'plus') renderPlusActions();
+    if (currentTab === 'vault') renderVault();
+  }
+
+  /* ---- page actions for the Beyond Insta+ tab ---- */
+  function renderPlusActions() {
+    var route = IGX.route();
+    var where = {
+      profile: 'this profile grid', home: 'your feed', explore: 'Explore',
+      post: 'this post', reel: 'the loaded reels', story: 'this story', dm: 'this conversation'
+    }[route] || 'this page';
+
+    var box = document.createElement('div');
+    box.className = 'row';
+    box.innerHTML = '<div class="info"><div class="lbl">Bulk actions</div>' +
+      '<div class="hint">Acts on what is loaded right now — currently ' + where + '. ' +
+      'Scroll further first to catch more.</div></div>';
+
+    var bulk = el('div', 'btn pri', 'Download everything loaded');
+    bulk.addEventListener('click', function () { P.close(); setTimeout(IGX.plus.bulk, 250); });
+    box.appendChild(bulk);
+
+    if (route === 'dm') {
+      var dm = el('div', 'btn', 'Save this chat');
+      dm.addEventListener('click', function () { P.close(); setTimeout(IGX.plus.dmGrab, 250); });
+      box.appendChild(dm);
+    }
+    ui.main.appendChild(box);
+
+    note('info', '<b>Things a modded phone app cannot do.</b> Picture-in-picture keeps a reel floating over ' +
+      'every other tab. Alt-click copies any text on the page. Bulk download saves a whole grid in one go ' +
+      'rather than one post at a time.');
+  }
+
+  /* ---- unsend vault ---- */
+  function renderVault() {
+    var list = IGX.vault.all();
+
+    var bar = document.createElement('div');
+    bar.style.cssText = 'display:flex;gap:9px;flex-wrap:wrap;margin:14px 0;';
+    if (list.length) {
+      var ex = el('div', 'btn', 'Export as text');
+      ex.addEventListener('click', function () { IGX.vault.export(); });
+      bar.appendChild(ex);
+      var cl = el('div', 'btn danger', 'Clear the vault');
+      cl.addEventListener('click', function () {
+        if (!confirm('Delete every archived and unsent message? This cannot be undone.')) return;
+        IGX.vault.clear();
+        renderMain();
+        P.sync();
+      });
+      bar.appendChild(cl);
+      ui.main.appendChild(bar);
+    }
+
+    if (!list.length) {
+      ui.main.appendChild(el('div', 'empty', IGX.settings.vaultEnabled
+        ? 'Nothing unsent yet. Open your DMs and leave this running — anything taken back from here on lands in this list.'
+        : 'The vault is off. Turn it on above and messages will be archived as they arrive.'));
+      return;
+    }
+
+    var box = document.createElement('div');
+    box.className = 'ulist';
+    list.slice(0, 200).forEach(function (u) {
+      var r = document.createElement('div');
+      r.className = 'urow';
+      r.style.alignItems = 'flex-start';
+      var when = u.ts ? IGX.stamp(u.ts * 1000) : 'unknown time';
+      var body = u.text
+        ? escapeHtml(u.text)
+        : '<i style="opacity:.6">' + escapeHtml(u.type || 'media') + ' — no text</i>';
+
+      r.innerHTML =
+        '<div style="flex:1;min-width:0">' +
+          '<div class="u">@' + escapeHtml(u.from || 'unknown') +
+            (u.title ? ' <span style="opacity:.5;font-weight:400">· ' + escapeHtml(u.title) + '</span>' : '') +
+          '</div>' +
+          '<div style="font-size:12.5px;margin:4px 0 3px;line-height:1.5;word-break:break-word">' + body + '</div>' +
+          '<div class="f">sent ' + when + ' · unsent ' + IGX.stamp(u.noticed) + '</div>' +
+        '</div>';
+
+      if (u.media) {
+        var open = el('a', '', 'Media');
+        open.href = u.media;
+        open.target = '_blank';
+        open.rel = 'noopener noreferrer';
+        r.appendChild(open);
+      }
+      var x = el('a', '', 'Forget');
+      x.href = 'javascript:void 0';
+      x.addEventListener('click', function (e) {
+        e.preventDefault();
+        IGX.vault.forget(u.id);
+        renderMain();
+      });
+      r.appendChild(x);
+      box.appendChild(r);
+    });
+    ui.main.appendChild(box);
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
   }
 
   function head(title, icon, blurb) {
@@ -675,13 +787,18 @@
     var box = document.createElement('div');
     box.className = 'ulist';
     list.slice(0, 400).forEach(function (u) {
+      /* Display names are attacker-controlled text. This panel lives in the
+       * isolated world, so an <img onerror> smuggled through a full_name would
+       * execute with chrome.* in reach — escape everything. */
       var r = document.createElement('div');
       r.className = 'urow';
+      var safeName = escapeHtml(u.username || '');
       r.innerHTML =
-        '<img src="' + (u.pic || '') + '" loading="lazy" />' +
-        '<div><div class="u">@' + u.username + (u.ver ? ' ✓' : '') + '</div>' +
-        '<div class="f">' + (u.full_name || (u.priv ? 'private account' : '')) + '</div></div>' +
-        '<a href="https://www.instagram.com/' + u.username + '/" target="_blank">Open</a>';
+        '<img src="' + escapeHtml(u.pic || '') + '" loading="lazy" referrerpolicy="no-referrer" />' +
+        '<div><div class="u">@' + safeName + (u.ver ? ' ✓' : '') + '</div>' +
+        '<div class="f">' + escapeHtml(u.full_name || (u.priv ? 'private account' : '')) + '</div></div>' +
+        '<a href="https://www.instagram.com/' + encodeURIComponent(u.username || '') + '/" ' +
+        'target="_blank" rel="noopener noreferrer">Open</a>';
       box.appendChild(r);
     });
     ui.main.appendChild(box);

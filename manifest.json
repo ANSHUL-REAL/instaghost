@@ -44,6 +44,8 @@
         "src/content/30-dislike.js",
         "src/content/40-cleanup.js",
         "src/content/45-tools.js",
+        "src/content/47-plus.js",
+        "src/content/48-vault.js",
         "src/content/50-hover.js",
         "src/content/60-followers.js",
         "src/content/70-panel.js",

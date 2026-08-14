@@ -4,6 +4,7 @@
   var IGX = window.IGX;
 
   function start() {
+    IGX.vault.load();
     IGX.dislike.load(function () {
       IGX.loadSettings(function () {
         IGX.ready = true;
@@ -32,6 +33,7 @@
         ok: true,
         blocked: IGX.blockedCount,
         dislikes: IGX.dislike.count(),
+        unsent: IGX.vault.count(),
         route: IGX.route()
       });
       return true;

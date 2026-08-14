@@ -101,6 +101,14 @@ if (CFG) {
   orphanKeys.forEach(k => fail("schema key '" + k + "' is world:'page' but hook.js has no rule with that id"));
   orphanRules.forEach(r => fail("hook.js rule '" + r + "' has no matching world:'page' schema key"));
   if (!orphanKeys.length && !orphanRules.length) ok(ruleIds.length + ' network rules match their schema keys');
+
+  /* world:'extra' keys are forwarded to the hook but gate harvesting, not a
+   * block rule — they must be read there and must NOT have a rule. */
+  for (const k of CFG.EXTRA_PAGE_KEYS) {
+    if (ruleIds.includes(k)) fail("'" + k + "' is world:'extra' but has a block rule — use world:'page'");
+    else if (!hook.includes('settings.' + k)) fail("hook.js never reads settings." + k);
+  }
+  if (CFG.EXTRA_PAGE_KEYS.length) ok(CFG.EXTRA_PAGE_KEYS.length + " world:'extra' key(s) read by the hook");
 }
 
 /* ---- done ---- */

@@ -265,6 +265,77 @@
     var found = 0;
     walk(json, 0, function () { found++; });
     if (found) post('MEDIA_CACHED', { count: found, size: cache.size });
+    if (/direct_v2/i.test(url)) harvestThreads(json);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Direct messages
+   *
+   * Two jobs: collect a thread's media under one key so "save everything in
+   * this conversation" works, and hand the raw item list to the content script
+   * so it can spot messages that later disappear.
+   * ------------------------------------------------------------------ */
+  function harvestThreads(json) {
+    var threads = [];
+    (function find(node, depth) {
+      if (!node || depth > 8 || typeof node !== 'object') return;
+      if (Array.isArray(node)) {
+        for (var i = 0; i < node.length && i < 60; i++) find(node[i], depth + 1);
+        return;
+      }
+      if (node.thread_id && Array.isArray(node.items)) threads.push(node);
+      for (var k in node) {
+        if (Object.prototype.hasOwnProperty.call(node, k) && node[k] && typeof node[k] === 'object') {
+          find(node[k], depth + 1);
+        }
+      }
+    })(json, 0);
+
+    for (var t = 0; t < threads.length; t++) collectThread(threads[t]);
+  }
+
+  function collectThread(thread) {
+    var id = String(thread.thread_id);
+    var names = {};
+    (thread.users || []).forEach(function (u) { names[String(u.pk)] = u.username; });
+
+    var media = [];
+    var items = [];
+
+    for (var i = 0; i < thread.items.length && i < 300; i++) {
+      var it = thread.items[i];
+      if (!it || !it.item_id) continue;
+
+      var payload = it.media || it.visual_media && it.visual_media.media ||
+                    it.raven_media && it.raven_media.media || null;
+      var shots = payload ? itemsOf(payload) : [];
+      for (var m = 0; m < shots.length; m++) media.push(shots[m]);
+
+      items.push({
+        id: String(it.item_id),
+        ts: Math.floor((it.timestamp || 0) / 1000),
+        from: names[String(it.user_id)] || String(it.user_id || ''),
+        type: it.item_type || 'text',
+        text: it.text || (it.link && it.link.text) ||
+              (it.reel_share && it.reel_share.text) || '',
+        media: shots.length ? shots[0].url : ''
+      });
+    }
+
+    if (media.length) {
+      put('dm:' + id, {
+        code: null, pk: id, owner: (thread.thread_title || 'direct').slice(0, 40),
+        taken_at: 0, caption: '', items: media
+      });
+    }
+
+    if (settings.vaultEnabled && items.length) {
+      post('DM_THREAD', {
+        threadId: id,
+        title: thread.thread_title || '',
+        items: items
+      });
+    }
   }
 
   function walk(node, depth, onFound) {

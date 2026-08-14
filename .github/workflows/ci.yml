@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Syntax, manifest and schema checks
+        run: node tools/validate.js
+
+      - name: Icons are reproducible
+        run: |
+          node tools/make-icons.js
+          git diff --exit-code -- icons/ \
+            || (echo "::error::icons/ is out of sync with tools/make-icons.js" && exit 1)
+
+      - name: No dependencies crept in
+        run: |
+          test ! -f package-lock.json || (echo "::error::InstaGhost ships zero dependencies" && exit 1)
+          test ! -d node_modules || (echo "::error::node_modules must not be committed" && exit 1)

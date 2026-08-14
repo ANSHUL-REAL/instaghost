@@ -286,7 +286,68 @@
       hint: 'A small clock showing how long you have been on Instagram.'
     },
 
-    /* ============ 7. Follower audit ============ */
+    /* ============ 7. Beyond Insta+ ============
+     * The features modded Android clients are actually installed for, plus the
+     * ones they cannot do because they are not a browser. */
+    {
+      key: 'exactTimestamps', group: 'plus', def: true,
+      label: 'Exact timestamps',
+      hint: 'Turns "2d" into the real date and time, on posts, comments and DMs.'
+    },
+    {
+      key: 'avatarViewer', group: 'plus', def: true,
+      label: 'Full-size profile pictures',
+      hint: 'Click any avatar to open it at full resolution, with a save button. Instagram has no way to do this.'
+    },
+    {
+      key: 'bulkDownload', group: 'plus', def: true,
+      label: 'Bulk download',
+      hint: 'One click saves every post loaded on the page — a whole profile grid, hashtag or saved collection.'
+    },
+    {
+      key: 'dmDownload', group: 'plus', def: true,
+      label: 'Download from DMs',
+      hint: 'Save photos and videos out of a conversation, including ones sent to view once you have already opened.'
+    },
+    {
+      key: 'pipButton', group: 'plus', def: true,
+      label: 'Picture-in-picture',
+      hint: 'Pop any reel out into a floating window that survives switching tabs. No phone app can do this.'
+    },
+    {
+      key: 'altCopy', group: 'plus', def: true,
+      label: 'Alt-click to copy any text',
+      hint: 'Captions, comments, bios, usernames — hold Alt and click to copy it.'
+    },
+    {
+      key: 'saveCaption', group: 'plus', def: false,
+      label: 'Save captions alongside downloads',
+      hint: 'Writes a .txt next to each download with the caption, author, link and date.'
+    },
+    {
+      key: 'translateBtn', group: 'plus', def: false,
+      label: 'Translate button',
+      hint: 'Sends the caption to Google Translate in a new tab. Nothing is sent anywhere until you click it.'
+    },
+
+    /* ============ 8. Unsend vault ============ */
+    {
+      key: 'vaultEnabled', group: 'vault', world: 'extra', def: false, risky: true,
+      label: 'Keep unsent messages',
+      hint: 'Archives DMs as they arrive, so a message someone unsends is still readable here. Read the note above before turning this on.'
+    },
+    {
+      key: 'vaultNotify', group: 'vault', def: true,
+      label: 'Tell me when something is unsent',
+      hint: 'A quiet toast the moment a message disappears from a conversation.'
+    },
+    {
+      key: 'vaultMedia', group: 'vault', def: false,
+      label: 'Archive media links too',
+      hint: 'Also keeps the CDN link for unsent photos and videos. Those links expire on Instagram\'s side after a while.'
+    },
+
+    /* ============ 9. Follower audit ============ */
     {
       key: 'scanDelay', group: 'audit', def: '1800', type: 'select',
       options: [
@@ -306,17 +367,25 @@
     return o;
   })();
 
+  /* Forwarded to the MAIN-world hook because it gates a network rule. */
   var PAGE_KEYS = SCHEMA.filter(function (s) { return s.world === 'page'; })
     .map(function (s) { return s.key; });
 
+  /* Also forwarded, but these gate harvesting rather than blocking — so they
+   * deliberately have no matching rule in hook.js. */
+  var EXTRA_PAGE_KEYS = SCHEMA.filter(function (s) { return s.world === 'extra'; })
+    .map(function (s) { return s.key; });
+
   var GROUPS = [
-    { id: 'ghost',  label: 'Ghost mode',  icon: '🔒', blurb: 'Blocks the requests that tell Instagram what you looked at.' },
-    { id: 'counts', label: 'Hide counts', icon: '🔢', blurb: 'Blurred, not deleted — hover any number to reveal it.' },
-    { id: 'feed',   label: 'Clean feed',  icon: '✨', blurb: 'Strip the feed down to what you actually followed.' },
-    { id: 'hover',  label: 'Hover peek',  icon: '🔍', blurb: 'Preview and act on media without opening it.' },
-    { id: 'theme',  label: 'Appearance',  icon: '🎨', blurb: 'Themes, accent colour and your own CSS.' },
-    { id: 'tools',  label: 'Power tools', icon: '⚡', blurb: 'Downloads, private dislikes, playback control.' },
-    { id: 'audit',  label: 'Followers',   icon: '📊', blurb: 'Who dropped you, who never followed back.' }
+    { id: 'ghost',  label: 'Ghost mode',   icon: '🔒', blurb: 'Blocks the requests that tell Instagram what you looked at.' },
+    { id: 'counts', label: 'Hide counts',  icon: '🔢', blurb: 'Blurred, not deleted — hover any number to reveal it.' },
+    { id: 'feed',   label: 'Clean feed',   icon: '✨', blurb: 'Strip the feed down to what you actually followed.' },
+    { id: 'hover',  label: 'Hover peek',   icon: '🔍', blurb: 'Preview and act on media without opening it.' },
+    { id: 'theme',  label: 'Appearance',   icon: '🎨', blurb: 'Themes, accent colour and your own CSS.' },
+    { id: 'tools',  label: 'Power tools',  icon: '⚡', blurb: 'Downloads, private dislikes, playback control.' },
+    { id: 'plus',   label: 'Beyond Insta+', icon: '🚀', blurb: 'Everything the modded Android clients are installed for — and the things they cannot do, because they are not a browser.' },
+    { id: 'vault',  label: 'Unsend vault', icon: '🗄️', blurb: 'Messages someone took back. Off by default, and worth a moment\'s thought before you turn it on.' },
+    { id: 'audit',  label: 'Followers',    icon: '📊', blurb: 'Who dropped you, who never followed back.' }
   ];
 
   function getSettings(cb) {
@@ -372,6 +441,8 @@
     GROUPS: GROUPS,
     DEFAULTS: DEFAULTS,
     PAGE_KEYS: PAGE_KEYS,
+    EXTRA_PAGE_KEYS: EXTRA_PAGE_KEYS,
+    VAULT_KEY: 'igx:vault',
     getSettings: getSettings,
     setSetting: setSetting,
     setMany: setMany,
