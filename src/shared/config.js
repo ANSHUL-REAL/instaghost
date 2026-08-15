@@ -183,7 +183,8 @@
         { value: 'sunset', label: 'Sunset Pink' },
         { value: 'forest', label: 'Forest Green' },
         { value: 'dracula', label: 'Dracula' },
-        { value: 'paper', label: 'Paper (light)' }
+        { value: 'paper', label: 'Paper (light)' },
+        { value: 'tokyonight', label: 'Tokyo Night' }
       ],
       label: 'Theme',
       hint: 'Repaints Instagram by overriding its own colour variables.'
@@ -397,16 +398,16 @@
     .map(function (s) { return s.key; });
 
   var GROUPS = [
-    { id: 'ghost',  label: 'Ghost mode',   icon: '🔒', blurb: 'Blocks the requests that tell Instagram what you looked at.' },
-    { id: 'counts', label: 'Hide counts',  icon: '🔢', blurb: 'Blurred, not deleted — hover any number to reveal it.' },
-    { id: 'feed',   label: 'Clean feed',   icon: '✨', blurb: 'Strip the feed down to what you actually followed.' },
-    { id: 'hover',  label: 'Hover peek',   icon: '🔍', blurb: 'Preview and act on media without opening it.' },
-    { id: 'theme',  label: 'Appearance',   icon: '🎨', blurb: 'Themes, accent colour and your own CSS.' },
-    { id: 'tools',  label: 'Power tools',  icon: '⚡', blurb: 'Downloads, private dislikes, playback control.' },
-    { id: 'plus',   label: 'Beyond Insta+', icon: '🚀', blurb: 'Everything the modded Android clients are installed for — and the things they cannot do, because they are not a browser.' },
-    { id: 'vault',  label: 'Unsend vault', icon: '🗄️', blurb: 'Messages someone took back. Off by default, and worth a moment\'s thought before you turn it on.' },
-    { id: 'watch',  label: 'Watchlist',    icon: '⭐', blurb: 'Accounts you check often, with their public profile one click away.' },
-    { id: 'audit',  label: 'Followers',    icon: '📊', blurb: 'Who dropped you, who never followed back.' }
+    { id: 'ghost', label: 'Ghost mode', icon: '🔒', blurb: 'Blocks the requests that tell Instagram what you looked at.' },
+    { id: 'counts', label: 'Hide counts', icon: '🔢', blurb: 'Blurred, not deleted — hover any number to reveal it.' },
+    { id: 'feed', label: 'Clean feed', icon: '✨', blurb: 'Strip the feed down to what you actually followed.' },
+    { id: 'hover', label: 'Hover peek', icon: '🔍', blurb: 'Preview and act on media without opening it.' },
+    { id: 'theme', label: 'Appearance', icon: '🎨', blurb: 'Themes, accent colour and your own CSS.' },
+    { id: 'tools', label: 'Power tools', icon: '⚡', blurb: 'Downloads, private dislikes, playback control.' },
+    { id: 'plus', label: 'Beyond Insta+', icon: '🚀', blurb: 'Everything the modded Android clients are installed for — and the things they cannot do, because they are not a browser.' },
+    { id: 'vault', label: 'Unsend vault', icon: '🗄️', blurb: 'Messages someone took back. Off by default, and worth a moment\'s thought before you turn it on.' },
+    { id: 'watch', label: 'Watchlist', icon: '⭐', blurb: 'Accounts you check often, with their public profile one click away.' },
+    { id: 'audit', label: 'Followers', icon: '📊', blurb: 'Who dropped you, who never followed back.' }
   ];
 
   function getSettings(cb) {
@@ -443,7 +444,7 @@
     chrome.storage.local.clear(function () {
       var patch = {};
       patch[SETTINGS_KEY] = {};
-      chrome.storage.local.set(patch, cb || function () {});
+      chrome.storage.local.set(patch, cb || function () { });
     });
   }
 
