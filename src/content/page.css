@@ -180,6 +180,76 @@ article.igx-disliked[data-igx-action="blur"] > *:not(.igx-cover) { filter: blur(
 }
 
 /* ------------------------------------------------------------------ *
+ * screen privacy for DMs
+ *
+ * Elements are tagged once with igx-p-*; these rules key off classes on
+ * <html>, so toggling a setting is instant and never re-walks the DOM.
+ * ------------------------------------------------------------------ */
+.igx-p-name,
+.igx-p-preview,
+.igx-p-avatar,
+.igx-p-media,
+.igx-p-bubble,
+.igx-p-list {
+  transition: filter .18s ease;
+}
+
+html.igx-dm-names .igx-p-name { filter: blur(5px); }
+html.igx-dm-previews .igx-p-preview { filter: blur(4px); }
+html.igx-dm-avatars .igx-p-avatar { filter: blur(7px); }
+html.igx-dm-media .igx-p-media { filter: blur(20px) saturate(.6); }
+html.igx-dm-convo .igx-p-bubble { filter: blur(6px); }
+html.igx-dm-list .igx-p-list { filter: blur(9px); }
+
+/* Reveal on hover — the row, not just the word under the pointer. */
+html.igx-reveal-hover.igx-dm-names [data-igx-p]:hover .igx-p-name,
+html.igx-reveal-hover.igx-dm-previews [data-igx-p]:hover .igx-p-preview,
+html.igx-reveal-hover.igx-dm-avatars [data-igx-p]:hover .igx-p-avatar,
+html.igx-reveal-hover.igx-dm-convo [data-igx-p]:hover.igx-p-bubble,
+html.igx-reveal-hover .igx-p-media:hover,
+html.igx-reveal-hover .igx-p-list:hover { filter: none !important; }
+
+/* Reveal while the shortcut is held, and anything clicked open. */
+html.igx-revealing .igx-p-name,
+html.igx-revealing .igx-p-preview,
+html.igx-revealing .igx-p-avatar,
+html.igx-revealing .igx-p-media,
+html.igx-revealing .igx-p-bubble,
+html.igx-revealing .igx-p-list,
+.igx-p-shown { filter: none !important; }
+
+/* Never blur what you have to type into. */
+.igx-p-safe,
+.igx-p-safe * { filter: none !important; }
+
+html.igx-reveal-click .igx-p-name,
+html.igx-reveal-click .igx-p-preview,
+html.igx-reveal-click .igx-p-media,
+html.igx-reveal-click .igx-p-bubble { cursor: pointer; }
+
+/* ------------------------------------------------------------------ *
+ * panic mode — blur the page, keep InstaGhost's own UI usable
+ * ------------------------------------------------------------------ */
+html.igx-panic body > *:not(#igx-root):not(#igx-toasts):not(#igx-panic-btn) {
+  filter: blur(22px) brightness(.45) saturate(.5);
+  transition: filter .2s ease;
+  pointer-events: none;
+}
+
+#igx-panic-btn {
+  right: auto;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  background: linear-gradient(135deg, #ff5c76, #c62b45);
+  box-shadow: 0 8px 24px rgba(255, 92, 118, .4), 0 2px 6px rgba(0, 0, 0, .35);
+}
+#igx-panic-btn.igx-on {
+  background: linear-gradient(135deg, #40d699, #1d9c6c);
+  box-shadow: 0 8px 24px rgba(64, 214, 153, .45);
+}
+
+/* ------------------------------------------------------------------ *
  * exact timestamps
  * ------------------------------------------------------------------ */
 .igx-ts {

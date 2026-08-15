@@ -82,6 +82,19 @@ box that overrides everything.
 - Real video controls, playback speed, remembered mute & volume, pause stories on
   hover, copy link (shift = copy caption), session timer.
 
+### 🫥 Screen privacy *(DMs)*
+For when someone can see your screen. Blur names, message previews, avatars, the
+open conversation and shared media in Direct — then reveal on hover, while
+holding `Alt+Shift+R`, or on click.
+
+**Panic mode** (`Alt+Shift+P`) blurs and dims the entire page in one keypress,
+with an optional floating button. InstaGhost's own panel stays usable underneath,
+so you can always turn it back off. Revealing also stops the instant the window
+loses focus — walking away is exactly when you don't want things uncovered.
+
+Blur, never hide: a selector that guesses wrong and blurs is a cosmetic
+annoyance, one that hides is a broken inbox. The composer is never blurred.
+
 ### 🚀 Beyond Insta+
 The things modded Android clients get installed for — and three they cannot do,
 because they are not a browser.

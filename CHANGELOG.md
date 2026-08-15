@@ -5,6 +5,23 @@ All notable changes to InstaGhost are documented here.
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 and the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
+## [1.2.0] — 2026-08-15
+
+### Added
+- **Screen privacy for DMs** — the shoulder-surfing cover from WA Canvas,
+  ported to Instagram Direct. Blur names, message previews, avatars, the open
+  conversation and shared media, then reveal on hover, while holding
+  `Alt+Shift+R`, or on click.
+- **Panic mode** — `Alt+Shift+P` blurs and dims the whole page instantly, with
+  an optional floating button. InstaGhost's own panel stays usable underneath
+  so you can turn it back off.
+- Revealing stops the moment the window loses focus — walking away is exactly
+  when you do not want content uncovered.
+- The message composer is never blurred; you cannot type into what you cannot see.
+
+### Contributed
+- **Tokyo Night** theme, by [@Ishika1106](https://github.com/Ishika1106) (#11)
+
 ## [1.1.1] — 2026-08-14
 
 ### Fixed
@@ -95,3 +112,4 @@ First release.
 [1.0.0]: https://github.com/ANSHUL-REAL/instaghost/releases/tag/v1.0.0
 [1.1.0]: https://github.com/ANSHUL-REAL/instaghost/releases/tag/v1.1.0
 [1.1.1]: https://github.com/ANSHUL-REAL/instaghost/releases/tag/v1.1.1
+[1.2.0]: https://github.com/ANSHUL-REAL/instaghost/releases/tag/v1.2.0

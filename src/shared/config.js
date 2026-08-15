@@ -287,6 +287,60 @@
       hint: 'A small clock showing how long you have been on Instagram.'
     },
 
+    /* ============ 6b. Screen privacy (DMs) ============
+     * Shoulder-surfing cover for the Direct inbox. Blur, never hide — a wrong
+     * selector that blurs is cosmetic, one that hides is a broken inbox. */
+    {
+      key: 'dmBlurList', group: 'screen', def: false,
+      label: 'Blur the whole chat list',
+      hint: 'Covers the entire conversation list in Direct.'
+    },
+    {
+      key: 'dmBlurNames', group: 'screen', def: true,
+      label: 'Blur names',
+      hint: 'Who you talk to stops being readable from across the room.'
+    },
+    {
+      key: 'dmBlurPreviews', group: 'screen', def: true,
+      label: 'Blur message previews',
+      hint: 'The last-message snippet under each name in the list.'
+    },
+    {
+      key: 'dmBlurAvatars', group: 'screen', def: false,
+      label: 'Blur profile pictures',
+      hint: 'Faces are recognisable at a distance even when names are not.'
+    },
+    {
+      key: 'dmBlurConversation', group: 'screen', def: false,
+      label: 'Blur the open conversation',
+      hint: 'Message bubbles in the chat you have open.'
+    },
+    {
+      key: 'dmBlurMedia', group: 'screen', def: true,
+      label: 'Blur photos and videos in chats',
+      hint: 'Shared media is the thing you least want on screen by accident.'
+    },
+    {
+      key: 'dmRevealMode', group: 'screen', def: 'hover', type: 'select',
+      options: [
+        { value: 'hover', label: 'Reveal on hover' },
+        { value: 'hold', label: 'Reveal while holding Alt+Shift+R' },
+        { value: 'click', label: 'Reveal on click' }
+      ],
+      label: 'How to reveal',
+      hint: 'Hover is quickest. Hold is safest — nothing uncovers by accident.'
+    },
+    {
+      key: 'panicKey', group: 'screen', def: true,
+      label: 'Panic mode  ·  Alt+Shift+P',
+      hint: 'One keypress blurs the entire page. Press again to bring it back.'
+    },
+    {
+      key: 'panicButton', group: 'screen', def: false,
+      label: 'Floating panic button',
+      hint: 'A small button on the page for when your hands are not on the keyboard.'
+    },
+
     /* ============ 7. Beyond Insta+ ============
      * The features modded Android clients are actually installed for, plus the
      * ones they cannot do because they are not a browser. */
@@ -404,6 +458,7 @@
     { id: 'hover', label: 'Hover peek', icon: '🔍', blurb: 'Preview and act on media without opening it.' },
     { id: 'theme', label: 'Appearance', icon: '🎨', blurb: 'Themes, accent colour and your own CSS.' },
     { id: 'tools', label: 'Power tools', icon: '⚡', blurb: 'Downloads, private dislikes, playback control.' },
+    { id: 'screen', label: 'Screen privacy', icon: '🫥', blurb: 'For when someone can see your screen. Blurs your DMs until you hover, hold a key, or click.' },
     { id: 'plus', label: 'Beyond Insta+', icon: '🚀', blurb: 'Everything the modded Android clients are installed for — and the things they cannot do, because they are not a browser.' },
     { id: 'vault', label: 'Unsend vault', icon: '🗄️', blurb: 'Messages someone took back. Off by default, and worth a moment\'s thought before you turn it on.' },
     { id: 'watch', label: 'Watchlist', icon: '⭐', blurb: 'Accounts you check often, with their public profile one click away.' },
